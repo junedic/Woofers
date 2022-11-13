@@ -1,3 +1,19 @@
+/*
+drop table bookedAppointments;
+
+drop table appointments;
+
+drop table dogs;
+
+drop table customers;
+
+drop table employees;
+
+drop table races;
+
+drop table services;
+*/
+
 CREATE TABLE employees
 (
         employee_id  int unsigned auto_increment NOT NULL UNIQUE ,
