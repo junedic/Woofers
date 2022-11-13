@@ -1,6 +1,6 @@
 CREATE TABLE employees
 (
-        employee_id  int unsigned NOT NULL UNIQUE ,
+        employee_id  int unsigned auto_increment NOT NULL UNIQUE ,
         surname      varchar(255) NOT NULL ,
         name         varchar(255) NOT NULL ,
         mobile       mediumint unsigned NOT NULL ,
@@ -10,7 +10,7 @@ CREATE TABLE employees
 
 CREATE TABLE services
 (
-        service_id  int unsigned NOT NULL UNIQUE ,
+        service_id  int unsigned auto_increment NOT NULL UNIQUE ,
         service     ENUM(
                         'Schneiden',
                         'Waschen',
@@ -24,7 +24,7 @@ CREATE TABLE services
 
 CREATE TABLE customers
 (
-        customer_id int unsigned NOT NULL UNIQUE ,
+        customer_id int unsigned auto_increment NOT NULL UNIQUE ,
         surname     varchar(255) NOT NULL ,
         name        varchar(255) NOT NULL ,
         mobile      mediumint unsigned NOT NULL ,
@@ -34,7 +34,7 @@ CREATE TABLE customers
 
 CREATE TABLE races
 (
-        race_id     int unsigned NOT NULL UNIQUE ,
+        race_id     int unsigned auto_increment NOT NULL UNIQUE ,
         race        ENUM(
                         'Golden Retriever',
                         'Chihuahua',
@@ -47,7 +47,7 @@ CREATE TABLE races
 
 CREATE TABLE dogs
 (
-        dog_id      int unsigned NOT NULL UNIQUE ,
+        dog_id      int unsigned auto_increment NOT NULL UNIQUE ,
         customer_id int unsigned NOT NULL ,
         race_id     int unsigned NOT NULL ,
         name        varchar(255) NOT NULL ,
@@ -60,7 +60,7 @@ CREATE TABLE dogs
 
 CREATE TABLE appointments
 (
-        appointment_id  int unsigned NOT NULL UNIQUE ,
+        appointment_id  int unsigned auto_increment NOT NULL UNIQUE ,
         employee_id     int unsigned NOT NULL ,
         dog_id          int unsigned NOT NULL ,
         customer_id     int unsigned NOT NULL ,
