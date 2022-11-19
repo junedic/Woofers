@@ -14,85 +14,85 @@ drop table races;
 drop table services;
 */
 
-CREATE TABLE employees
+CREATE TABLE mitarbeiter
 (
-        employee_id  int unsigned auto_increment NOT NULL UNIQUE ,
-        surname      varchar(255) NOT NULL ,
-        name         varchar(255) NOT NULL ,
-        mobile       mediumint unsigned NOT NULL ,
+        mitarbeiter_id  int unsigned auto_increment NOT NULL UNIQUE ,
+        nachname      varchar(255) NOT NULL ,
+        vorname         varchar(255) NOT NULL ,
+        telefonnummer       mediumint unsigned NOT NULL ,
         email        varchar(255) NOT NULL ,
-        PRIMARY KEY  (employee_id)
+        PRIMARY KEY  (mitarbeiter_id)
 );
 
-CREATE TABLE services
+CREATE TABLE dienstleistung
 (
-        service_id  int unsigned auto_increment NOT NULL UNIQUE ,
-        service     ENUM(
+        dienstleistung_id  int unsigned auto_increment NOT NULL UNIQUE ,
+        dienstleistung     ENUM(
                         'Schneiden',
                         'Waschen',
                         'Entfilzen',
                         'Entlausen',
                         'Massage'
                     ) NOT NULL UNIQUE ,
-        price       tinyint unsigned NOT NULL ,
-        PRIMARY KEY (service_id)
+        preis       tinyint unsigned NOT NULL ,
+        PRIMARY KEY (dienstleistung_id)
 );
 
-CREATE TABLE customers
+CREATE TABLE kunde
 (
-        customer_id int unsigned auto_increment NOT NULL UNIQUE ,
-        surname     varchar(255) NOT NULL ,
-        name        varchar(255) NOT NULL ,
-        mobile      mediumint unsigned NOT NULL ,
+        kunden_id int unsigned auto_increment NOT NULL UNIQUE ,
+        nachname     varchar(255) NOT NULL ,
+        vorname       varchar(255) NOT NULL ,
+        telefonnummer      mediumint unsigned NOT NULL ,
         email       varchar(255),
-        PRIMARY KEY (customer_id)
+        PRIMARY KEY (kunden_id)
 );
 
-CREATE TABLE races
+CREATE TABLE rasse
 (
-        race_id     int unsigned auto_increment NOT NULL UNIQUE ,
-        race        ENUM(
+        rasse_id     int unsigned auto_increment NOT NULL UNIQUE ,
+        rasse        ENUM(
                         'Golden Retriever',
                         'Chihuahua',
                         'Rottweiler',
                         'Bulldogge',
                         'Dogo Argentino'
                     ) NOT NULL UNIQUE,
-                    PRIMARY KEY (race_id)
+                    PRIMARY KEY (rasse_id)
 );
 
-CREATE TABLE dogs
+CREATE TABLE hund
 (
-        dog_id      int unsigned auto_increment NOT NULL UNIQUE ,
-        customer_id int unsigned NOT NULL ,
-        race_id     int unsigned NOT NULL ,
+        hund_id      int unsigned auto_increment NOT NULL UNIQUE ,
+        kunden_id int unsigned NOT NULL ,
+        rasse_id     int unsigned ,
         name        varchar(255) NOT NULL ,
-        sex         ENUM('m', 'f') NOT NULL ,
-        birth       year NOT NULL ,
-        FOREIGN KEY (customer_id) references customers(customer_id),
-        FOREIGN KEY (race_id) references races(race_id),
-        PRIMARY KEY (dog_id)
+        geschlecht         ENUM('m', 'f') NOT NULL ,
+        geburtsjahr      year NOT NULL ,
+        FOREIGN KEY (kunden_id) references kunde(kunden_id) ON DELETE CASCADE ON UPDATE CASCADE , # hund ohne kunde sinnlos, hund muss mit korrektem kunden verknuept sein
+        FOREIGN KEY (rasse_id) references rasse(rasse_id) ON DELETE SET NULL ON UPDATE CASCADE , # hund ohne rasse sinnvoll, da sonst kundendaten verloren gehen koennen
+        PRIMARY KEY (hund_id)
 );
 
-CREATE TABLE appointments
+CREATE TABLE termin
 (
-        appointment_id  int unsigned auto_increment NOT NULL UNIQUE ,
-        employee_id     int unsigned NOT NULL ,
-        dog_id          int unsigned NOT NULL ,
-        customer_id     int unsigned NOT NULL ,
-        date            date NOT NULL ,
-        time            time NOT NULL ,
-        FOREIGN KEY (employee_id) references employees(employee_id),
-        FOREIGN KEY (dog_id) references dogs(dog_id),
-        FOREIGN KEY (customer_id) references dogs(customer_id),
-        PRIMARY KEY (appointment_id)
+        termin_id  int unsigned auto_increment NOT NULL UNIQUE ,
+        mitarbeiter_id     int unsigned ,
+        hund_id          int unsigned ,
+        kunden_id     int unsigned ,
+        datum            date NOT NULL ,
+        zeit            time NOT NULL ,
+        FOREIGN KEY (mitarbeiter_id) references mitarbeiter(mitarbeiter_id) ON DELETE SET NULL ON UPDATE CASCADE, #termindaten aus der vergangenheit erhalten
+        FOREIGN KEY (hund_id) references hund(hund_id) ON DELETE SET NULL ON UPDATE CASCADE, #termindaten aus der vergangenheit erhalten
+        FOREIGN KEY (mitarbeiter_id) references hund(kunden_id) ON DELETE SET NULL ON UPDATE CASCADE, #termindaten aus der vergangenheit erhalten
+        PRIMARY KEY (termin_id)
 );
 
-CREATE TABLE bookedAppointments
+CREATE TABLE gebuchterTermin
 (
-        appointment_id  int unsigned NOT NULL ,
-        service_id      int unsigned NOT NULL ,
-        FOREIGN KEY (appointment_id) references appointments(appointment_id),
-        FOREIGN KEY (service_id) references services(service_id),
-        PRIMARY KEY (appointment_id, service_id)
+        termin_id  int unsigned NOT NULL ,
+        dienstleistung_id      int unsigned ,
+        FOREIGN KEY (termin_id) references termin(termin_id) ON DELETE CASCADE ON UPDATE CASCADE, # ohne termin kein gebuchter termin, muessen matchen sonst tabelle sinnlos
+        FOREIGN KEY (dienstleistung_id) references dienstleistung(dienstleistung_id) ON DELETE SET NULL ON UPDATE CASCADE, # termin ohne dienstleistung sinnvoll, fuer archiv daten
+        PRIMARY KEY (termin_id, dienstleistung_id)
 );
